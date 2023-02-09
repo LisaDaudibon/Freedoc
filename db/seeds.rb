@@ -5,3 +5,43 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+
+require 'faker'
+
+City.destroy_all
+Appointment.destroy_all
+Doctor.destroy_all
+Patient.destroy_all
+
+array_cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego']
+
+array_specialties = ['Anesthesiologist', 'Dentist', 'Dermatologist', 'Neurologist', 'Ophthalmologist', 'Psychiatrist', 'Radiologist', 'Surgeon']
+
+array_cities.each do |city| 
+  c = City.create!(name: city)
+end
+
+array_specialties.each do |specialty| 
+  s = Specialty.create!(name: specialty)
+end
+
+10.times do
+  d = Doctor.create!(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name, zip_code: Faker::Address.zip_code, city_id: City.all.sample.id)
+end
+
+10.times do
+  p = Patient.create!(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name, city_id: City.all.sample.id)
+end
+
+5.times do
+  a = Appointment.new
+  a.date = Faker::Date.between(from: 5.days.ago, to: Date.today)
+  a.doctor = Doctor.all.sample
+  a.patient = Patient.all.sample
+  a.city_id = City.all.sample.id
+  a.save
+end
+
+5.times do
+  j = JoinTableSpecialtyDoctor.create!(doctor_id: Doctor.all.sample.id, specialty_id: Specialty.all.sample.id)
+end
